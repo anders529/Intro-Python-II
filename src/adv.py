@@ -1,19 +1,21 @@
 from room import Room
 from player import Player
+from item import Item
+
 # Declare all the rooms
 
 room = {
-    'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+    'outside': Room("Outside Cave Entrance",
+                    "North of you, the cave mount beckons"),
 
-    'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
+    'foyer': Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
 the distance, but there is no way across the chasm."""),
 
-    'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
+    'narrow': Room("Narrow Passage", """The narrow passage bends here from west
 to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
@@ -35,59 +37,62 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-player = Player(input("What's your name?: "), room["outside"])
+print('Let\'s play a game! \n')
+player_name = input("What's your name? :  ")
 
-# Write a loop that:
-while True:
-    try:
-        # * Prints the current room name
-        print(f"\nCurrent room: {player.current_room.name}")
+player = Player('AARON', room["outside"])
 
-        # * Prints the current description (the textwrap module might be useful here).
-        print(f"\nRoom description: {player.current_room.description}")
 
-        # * Waits for user input and decides what to do.
-        commands = ["n - north", "s - south", "e - east", "w - west", "q - quit"]
-        print("\nCommands are as follows...")
-        for i in commands:
-            print(i)
+def print_controls():
+    print('\nControls:')
+    print(' n = north \n s = south \n e = east \n w = west')
+    print(' q to exit game')
 
-        print("\n")
-        command = input("\nChoose a command: ")
-        print("\n")
 
-        # If the user enters "q", quit the game.
-        if command == "q":
-            print("\n")
-            print(f"\nThanks for playing {player.name}")
-            print("\n")
-            break
+choices = ['n', 's', 'e', 'w', 'q']
 
-        # If the user enters a cardinal direction, attempt to move to the room there.
-        if command == "n":
-            if player.current_room.n_to == None:
-                print("\n The way through is blocked find another way")
-            else:
-                player.change_room(player.current_room.n_to)
+print_controls()
 
-        if command == "s":
-            if player.current_room.s_to == None:
-                print("\nThe way through is blocked find another way")
-            else:
-                player.change_room(player.current_room.s_to)
+choice = 0
 
-        if command == "e":
-            if player.current_room.e_to == None:
-                print("\n The way through is blocked find another way")
-            else:
-                player.change_room(player.current_room.e_to)
+lantern = Item('lantern', 'This lantern will light the path.')
+room['overlook'].add_item(lantern)
 
-        if command == "w":
-            if player.current_room.w_to == None:
-                print("\nThe way through is blocked find another way")
-            else:
-                player.change_room(player.current_room.w_to)
+print(
+    f'\n  You are standing near the {player.location.name} \n\n  {player.location.description}')
 
-    # Print an error message if the movement isn't allowed.
-    except AttributeError:
-        print("Something must have went wrong")
+while choice != 'q':
+    choice = input('\nChoose direction: ')
+    if choice == 'n':
+        player.location = player.location.n_to
+        print(
+            f'\n  You run north towards the {player.location.name} \n\n  {player.location.description}')
+    elif len(player.location.items) != 0:
+        print(f'\n  You see a {player.location.items[0]}')
+
+    if choice == 's':
+        player.location = player.location.s_to
+        print(
+            f'\n  You run South towards the {player.location.name} \n\n  {player.location.description}')
+    elif len(player.location.items) != 0:
+        print(f'\n  You see a {player.location.items[0]}')
+
+    if choice == 'e':
+        player.location = player.location.e_to
+        print(
+            f'\n  You run East into the {player.location.name} \n\n   {player.location.description}')
+    elif len(player.location.items) != 0:
+        print(f'\n  You see a {player.location.items[0]}')
+
+    if choice == 'w':
+        player.location = player.location.w_to
+        print(
+            f'\n  You run West towards the {player.location.name} \n\n   {player.location.description}')
+    elif len(player.location.items) != 0:
+        print(f'\n  You see a {player.location.items[0]}')
+
+    if choice not in choices:
+        print('\n   That is not a direction! Try again you idiot!!')
+
+    else:
+        print("\n   You can't go that way! Are you that stupid!?")
